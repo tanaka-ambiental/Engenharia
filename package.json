@@ -1,0 +1,16 @@
+{
+  "name": "engenharia-hidrica",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Estudos de disponibilidade hídrica e autodepuração por Streeter–Phelps",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs",
+    "build:pages": "node scripts/build-pages.mjs",
+    "test": "node --test",
+    "test:browser": "node scripts/browser-smoke.mjs",
+    "check": "node --check server.mjs && node --check src/model.js && node --check src/app.js"
+  }
+}

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123d3b">
+  <title>Engenharia Hídrica · Estudos de outorga</title>
+  <link rel="stylesheet" href="./src/style.css">
+  <script type="module" src="./src/app.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#inicio"><span class="brand-icon">≈</span><span>Engenharia<strong>Hídrica</strong></span></a>
+    <span class="nav-caption">ÁREA DE ESTUDOS</span>
+    <nav aria-label="Seções do estudo">
+      <a href="#identificacao"><span>01</span> Identificação</a>
+      <a href="#disponibilidade"><span>02</span> Disponibilidade hídrica</a>
+      <a href="#autodepuracao"><span>03</span> Autodepuração</a>
+      <a href="#resultados"><span>04</span> Resultados e relatório</a>
+      <a href="#metodologia"><span>05</span> Metodologia</a>
+    </nav>
+    <div class="sidebar-note"><span class="live-dot"></span> Cálculo no seu navegador<p>Estudos preliminares de apoio à análise de outorga.</p><small>MODELO STREETER–PHELPS · V0.1</small></div>
+  </aside>
+  <main id="inicio">
+    <header class="topbar"><span>ESTUDOS AMBIENTAIS <b>/</b> RECURSOS HÍDRICOS</span><span class="pill">Versão inicial</span></header>
+    <div class="page-heading"><div><p class="eyebrow">DA VAZÃO À QUALIDADE DA ÁGUA</p><h1>Estudo hídrico integrado</h1><p>Organize os dados, simule o trecho e documente as hipóteses do seu estudo.</p></div><button type="button" id="example" class="button secondary">Carregar exemplo</button></div>
+    <div class="notice"><strong>Base técnica para conferência.</strong> Os valores iniciais são demonstrativos. Os critérios devem ser definidos pelo responsável técnico conforme o enquadramento do corpo hídrico e as exigências aplicáveis do SP Águas. O aplicativo não atesta aprovação de outorga.</div>
+    <div class="toolbar"><span id="scenario-state">Cenário demonstrativo</span><div><button type="button" id="import" class="text-button">Importar estudo</button><button type="button" id="export" class="text-button">Salvar estudo JSON ↓</button><input type="file" id="file" accept="application/json,.json" hidden></div></div>
+    <form id="study-form">
+      <section class="card" id="identificacao"><div class="section-heading"><span class="step">01</span><div><h2>Identificação do estudo</h2><p>Informações que acompanham o relatório e a memória de cálculo.</p></div></div>
+        <div class="grid three">
+          <label>Natureza dos dados<select id="scenario-kind" name="scenarioKind"><option value="example">Exemplo demonstrativo</option><option value="study">Dados do meu estudo</option></select></label>
+          <label>Nome do empreendimento<input name="project" maxlength="200" placeholder="Ex.: Unidade industrial"></label>
+          <label>Corpo hídrico<input name="waterbody" maxlength="200" placeholder="Nome do rio ou córrego"></label>
+          <label>Município / bacia hidrográfica<input name="location" maxlength="200" placeholder="Município · UGRHI"></label>
+          <label>Responsável técnico<input name="responsible" maxlength="200" placeholder="Nome e registro profissional"></label>
+          <label>Vazão de referência adotada<input name="reference" maxlength="200" placeholder="Ex.: Q₇,₁₀ · estação e período"></label>
+          <label>Enquadramento e fundamento dos critérios<input name="criteria" maxlength="300" placeholder="Classe, norma e condição de análise"></label>
+        </div>
+        <label class="full-label">Fontes dos dados, coeficientes e observações<textarea name="sources" maxlength="6000" rows="3" placeholder="Registre medições, datas, coordenadas, origem das vazões, justificativa da parcela outorgável, saturação, coeficientes e condicionantes do estudo."></textarea></label>
+      </section>
+      <section class="card" id="disponibilidade"><div class="section-heading"><span class="step">02</span><div><h2>Disponibilidade hídrica</h2><p>Balanço simplificado da parcela de referência disponível para captação.</p></div><span class="tag">BALANÇO DE VAZÕES</span></div>
+        <div class="grid four" id="availability-fields"></div>
+        <p class="field-note">Informe vazões compatíveis com o mesmo ponto e período de referência. O balanço não credita automaticamente o lançamento como retorno e não substitui uma análise hidrológica da bacia.</p>
+        <div id="budget-preview" class="budget-preview"></div>
+      </section>
+      <section class="card" id="autodepuracao"><div class="section-heading"><span class="step">03</span><div><h2>Autodepuração do corpo hídrico</h2><p>Simulação unidimensional após mistura completa do rio e do efluente.</p></div><span class="tag">STREETER–PHELPS</span></div>
+        <h3>Condições do rio e do lançamento</h3><div class="grid three" id="mixing-fields"></div>
+        <p class="field-note">A vazão do rio é a vazão efetiva imediatamente antes do lançamento, já considerando as intervenções pertinentes. Ela é informada separadamente do balanço de captação.</p>
+        <h3>Trecho, temperatura e critério de análise</h3><div class="grid three" id="reach-fields"></div>
+        <p class="field-note">Informe a saturação de OD considerando temperatura, altitude/pressão e salinidade locais. O valor do exemplo (9,09 mg/L) representa água doce a 20 °C, aproximadamente ao nível do mar.</p>
+        <details><summary>Coeficientes cinéticos e correção de temperatura</summary><div class="grid three" id="kinetic-fields"></div><p class="field-note">Todos os coeficientes usam base exponencial natural (e). Kᵦ converte DBO₅ do ensaio a 20 °C em DBO última; K₁ representa a desoxigenação no rio. Os coeficientes do exemplo não constituem calibração para o seu trecho.</p></details>
+      </section>
+      <div class="calculate-bar"><p>Revise os dados e atualize os resultados.<small>Os cálculos são locais. Nenhum dado é enviado a um serviço externo.</small></p><button type="submit" class="button primary">Calcular estudo <span>→</span></button></div>
+    </form>
+    <div id="error" class="error" role="alert" hidden></div>
+    <section id="resultados" class="results" aria-labelledby="results-heading">
+      <div class="results-title"><div><p class="eyebrow">LEITURA DO CENÁRIO</p><h2 id="results-heading">Resultados do estudo</h2></div><button type="button" class="button secondary" id="print">Imprimir / PDF</button></div>
+      <p id="result-state" role="status" aria-live="polite"></p>
+      <div id="metrics" class="metric-grid"></div>
+      <div class="card chart-card"><div class="chart-heading"><div><h3>Perfil de oxigênio dissolvido</h3><p>Concentração ao longo do trecho após o lançamento</p></div><div class="legend"><span class="line-key"></span> OD calculado <span class="line-key dashed"></span> Critério informado</div></div><div id="chart"></div><p id="chart-description" class="field-note"></p></div>
+      <div class="result-columns"><div class="card"><h3>Memória de cálculo</h3><dl id="calculation-details"></dl></div><div class="card"><h3>Verificações e limitações</h3><div id="checks"></div><div id="warnings"></div></div></div>
+      <section class="card report-only" id="report-inputs"><h3>Dados de entrada e identificação</h3><div id="report-metadata"></div><table><thead><tr><th>Parâmetro</th><th>Valor</th><th>Unidade</th></tr></thead><tbody id="input-table"></tbody></table></section>
+    </section>
+    <section class="card methodology" id="metodologia"><div class="section-heading"><span class="step">05</span><div><h2>Metodologia e limites de aplicação</h2><p>Memória técnica do modelo implementado.</p></div></div>
+      <div class="formula-grid"><div><h3>Balanço de disponibilidade</h3><p class="formula">Q<sub>saldo</sub> = Q<sub>ref</sub> · f − Q<sub>comprometida</sub> − Q<sub>nova</sub></p><p>f é a fração adotada pelo responsável. O aplicativo não estima a vazão de referência nem estabelece um percentual oficial outorgável.</p></div><div><h3>Mistura e demanda de oxigênio</h3><p class="formula">C<sub>mistura</sub> = (Q<sub>r</sub>C<sub>r</sub> + Q<sub>e</sub>C<sub>e</sub>) / (Q<sub>r</sub> + Q<sub>e</sub>)</p><p class="formula">L₀ = DBO₅<sub>mistura</sub> / (1 − e<sup>−5Kᵦ</sup>)</p><p>C representa OD ou DBO₅. O ensaio de DBO₅ é considerado a 20 °C.</p></div></div>
+      <div class="equation"><p>D(t) = [K₁ L₀ / (K₂ − K₁)] · (e<sup>−K₁t</sup> − e<sup>−K₂t</sup>) + D₀ e<sup>−K₂t</sup></p><p>OD(t) = OD<sub>sat</sub> − D(t) <span>·</span> t = x / v <span>·</span> K(T) = K(20) · θ<sup>T−20</sup></p></div>
+      <p>O tempo é expresso em dias; as distâncias e a velocidade são convertidas de km e m/s. Quando K₁ = K₂ = K, usa-se D(t) = (K L₀ t + D₀)e<sup>−Kt</sup>. O OD mínimo no trecho inclui as extremidades e o extremo analítico, quando existente.</p>
+      <p>Hipóteses: regime permanente, mistura completa instantânea, escoamento unidimensional, vazão, velocidade, temperatura e saturação constantes, um lançamento e decaimento de primeira ordem. Não contempla nitrificação, demanda do sedimento, fotossíntese, dispersão, tributários, múltiplos lançamentos ou variação sazonal. OD negativo indica esgotamento e extrapolação do regime aeróbio.</p>
+      <p><strong>Referência conceitual:</strong> Streeter, H. W.; Phelps, E. B. (1925). <em>A Study of the Pollution and Natural Purification of the Ohio River.</em> U.S. Public Health Bulletin 146. A adequação dos coeficientes e do modelo deve ser justificada para o caso concreto.</p>
+      <p><strong>Uso em outorga:</strong> esta versão não implementa nem certifica um roteiro oficial do SP Águas. A análise de OD é apenas uma parte do estudo de qualidade. Verifique os demais parâmetros, restrições, documentação, enquadramento e exigências vigentes junto ao órgão competente. A conclusão e a responsabilidade técnica cabem ao profissional habilitado.</p>
+    </section>
+    <footer>Engenharia Hídrica <span>Disponibilidade & autodepuração · Modelo técnico preliminar</span></footer>
+  </main>
+</body>
+</html>
